@@ -185,20 +185,27 @@ class GoogleImages {
         $verticales = array();
 
         foreach ($data->responseData->results as $result) {
-            $s = getimagesize($result->url);
-            $w = $s[0];
-            $h = $s[1];
+            $u = $result->url;
+            $posJpg = strpos($u, ".jpg");
+            $posPng = strpos($u, ".png");
+            if($posJpg !== false || strpos($posPng, ".png") !== false ){
+                $s = getimagesize($u);
+                if($s){
+                    $w = $s[0];
+                    $h = $s[1];
 
-            if ($h > $w) {
-                $percent = $h / 100;
-                if ($h + ($percent * 20) > $w) {
-                    $verticales[] = $result;
+                    if ($h > $w) {
+                        $percent = $h / 100;
+                        if ($h + ($percent * 20) > $w) {
+                            $verticales[] = $result;
+                        }
+                    }
+
+                    $results[] = array(
+                        'url' => $result->url,
+                        'alt' => $result->title);
                 }
             }
-
-            $results[] = array(
-                'url' => $result->url,
-                'alt' => $result->title);
         }
 
         if (isset($verticales[0])) {
